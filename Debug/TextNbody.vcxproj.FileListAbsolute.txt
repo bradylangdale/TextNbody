@@ -1,0 +1,2 @@
+C:\Users\brady\Documents\VS 2019 Projects\TextNbody\Debug\TextNbody.exe
+C:\Users\brady\Documents\VS 2019 Projects\TextNbody\Debug\TextNbody.pdb
