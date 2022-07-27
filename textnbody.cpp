@@ -15,19 +15,19 @@ int main()
 	nbodies = new nbody[bodies];
 	getNbodies(nbodies, bodies);
 
-	clear();
+	wipescreen();
 	cout << "All bodies initialized." << endl;
 	system("Pause");
 
 	while (!(GetKeyState('P') & 0x8000))
 	{
-		clear();
-		int start_time = GetTickCount();
+		int start_time = GetTickCount64();
 
 		updateNbodies(nbodies, bodies);
+		clear();
 		displayNbodies(nbodies, bodies);
 
-		int time_left = 16 - (GetTickCount() - start_time);
+		int time_left = 16 - (GetTickCount64() - start_time);
 		Sleep((time_left < 0) ? 0 : time_left);
 	}
 
@@ -91,14 +91,12 @@ void updateNbodies(nbody* nbodies, int body_count)
 	}
 }
 
-//slower display method
-/*void displayNbodies(nbody* nbodies, int body_count)
+void displayNbodies(nbody* nbodies, int body_count)
 {
-	char display[height][width + 1];
-
-	for (int i = 0; i < height; i++)//y
+	std::ios_base::sync_with_stdio(false);
+	for (int i = 0; i < height; i++) // y
 	{
-		for (int j = 0; j < width; j++)//x
+		for (int j = 0; j < width; j++) // x
 		{
 			display[i][j] = ' ';
 		}
@@ -114,37 +112,16 @@ void updateNbodies(nbody* nbodies, int body_count)
 			display[py][px] = b.symbol;
 	}
 
+	cout << nounitbuf;
 	for (int i = 0; i < height; i++)
 	{
 		cout << display[i] << endl;
 	}
 
-}*/
-
-void displayNbodies(nbody* nbodies, int body_count)
-{
-	for (int i = 0; i < body_count; i++)
-	{
-		nbody b = *(nbodies + i);
-		int px = (int)round(b.x);
-		int py = (int)round(b.y);
-		if (px < width && px >= 0 && py < height && py >= 0)
-		{
-			COORD coord;
-			coord.X = px;
-			coord.Y = py;
-			SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-			printf("%c", b.symbol);
-		}
-	}
-
-	COORD coord;
-	coord.X = 0;
-	coord.Y = 0;
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 }
 
-void clear() {
+// wipes all text
+void wipescreen() {
 	COORD topLeft = { 0, 0 };
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 	CONSOLE_SCREEN_BUFFER_INFO screen;
@@ -159,4 +136,17 @@ void clear() {
 		screen.dwSize.X * screen.dwSize.Y, topLeft, &written
 	);
 	SetConsoleCursorPosition(console, topLeft);
+}
+
+// clears for display for print overwrite
+void clear()
+{
+	HANDLE hOut;
+	COORD Position;
+
+	hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	Position.X = 0;
+	Position.Y = 0;
+	SetConsoleCursorPosition(hOut, Position);
 }
